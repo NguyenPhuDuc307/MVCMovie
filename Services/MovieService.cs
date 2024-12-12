@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MvcMovie.Data;
@@ -10,16 +11,32 @@ public class MovieService : IMovieService
 {
     private readonly MvcMovieContext _context;
     private readonly IMapper _mapper;
+    private readonly IStorageService _storageService;
+    private const string USER_CONTENT_FOLDER_NAME = "user-content";
 
-    public MovieService(MvcMovieContext context, IMapper mapper)
+    public MovieService(MvcMovieContext context, IMapper mapper, IStorageService storageService)
     {
         _context = context;
         _mapper = mapper;
+        _storageService = storageService;
+    }
+
+    private async Task<string> SaveFile(IFormFile file)
+    {
+        var originalFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName!.Trim('"');
+        var fileName = $"{Guid.NewGuid()}{Path.GetExtension(originalFileName)}";
+        await _storageService.SaveFileAsync(file.OpenReadStream(), fileName);
+        return "/" + USER_CONTENT_FOLDER_NAME + "/" + fileName;
     }
 
     public async Task<Movie> Create(MovieRequest request)
     {
         var movie = _mapper.Map<Movie>(request);
+        // Save image file
+        if (request.Image != null)
+        {
+            movie.ImagePath = await SaveFile(request.Image);
+        }
         _context.Add(movie);
         await _context.SaveChangesAsync();
 
@@ -31,6 +48,8 @@ public class MovieService : IMovieService
         var movie = await _context.Movie.FindAsync(id);
         if (movie != null)
         {
+            if (!string.IsNullOrEmpty(movie.ImagePath))
+                await _storageService.DeleteFileAsync(movie.ImagePath.Replace("/" + USER_CONTENT_FOLDER_NAME + "/", ""));
             _context.Movie.Remove(movie);
         }
 
@@ -60,6 +79,13 @@ public class MovieService : IMovieService
 
     public async Task<bool> Update(int id, MovieViewModel movie)
     {
+        // Save image file
+        if (movie.Image != null)
+        {
+            if (!string.IsNullOrEmpty(movie.ImagePath))
+                await _storageService.DeleteFileAsync(movie.ImagePath.Replace("/" + USER_CONTENT_FOLDER_NAME + "/", ""));
+            movie.ImagePath = await SaveFile(movie.Image);
+        }
         _context.Update(_mapper.Map<Movie>(movie));
         await _context.SaveChangesAsync();
 

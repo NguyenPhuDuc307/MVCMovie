@@ -11,8 +11,8 @@ using MvcMovie.Data;
 namespace MVCMovie.Data.Migrations
 {
     [DbContext(typeof(MvcMovieContext))]
-    [Migration("20241127025441_InitialCreated")]
-    partial class InitialCreated
+    [Migration("20241212033833_AddImageInMovie")]
+    partial class AddImageInMovie
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,13 +20,16 @@ namespace MVCMovie.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
 
-            modelBuilder.Entity("MVCMovie.Data.Movie", b =>
+            modelBuilder.Entity("MVCMovie.Data.Entities.Movie", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Genre")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ImagePath")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Price")

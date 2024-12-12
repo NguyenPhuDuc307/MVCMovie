@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MvcMovie.Data;
 
@@ -10,9 +11,11 @@ using MvcMovie.Data;
 namespace MVCMovie.Data.Migrations
 {
     [DbContext(typeof(MvcMovieContext))]
-    partial class MvcMovieContextModelSnapshot : ModelSnapshot
+    [Migration("20241212032136_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
@@ -24,9 +27,6 @@ namespace MVCMovie.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Genre")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ImagePath")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Price")

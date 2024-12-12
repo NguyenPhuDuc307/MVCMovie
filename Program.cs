@@ -13,6 +13,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddTransient<IStorageService, FileStorageService>();
 
 var app = builder.Build();
 

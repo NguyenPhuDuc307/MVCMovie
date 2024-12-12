@@ -6,6 +6,7 @@ public class MovieRequest
     public DateTime ReleaseDate { get; set; }
     public string? Genre { get; set; }
     public decimal Price { get; set; }
+    public IFormFile? Image { get; set; }
 }
 
 public class MovieViewModel
@@ -15,4 +16,6 @@ public class MovieViewModel
     public DateTime ReleaseDate { get; set; }
     public string? Genre { get; set; }
     public decimal Price { get; set; }
+    public string? ImagePath { get; set; }
+    public IFormFile? Image { get; set; }
 }
